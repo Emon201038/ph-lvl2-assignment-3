@@ -209,7 +209,7 @@ On successful retrieval, the response will return a JSON object containing the b
 - 
 ``` json
 { 
-  "success": true, 
+  "success": false, 
   "message": "", 
   "error": { 
     "name": "", 
@@ -440,85 +440,6 @@ On a successful request, the API will return a JSON object with the following st
 
 This endpoint allows you to update the number of copies for a specific book identified by its unique ID.
 
-### HTTP Method
-
-`PUT`
-
-### Endpoint
-
-`http://localhost:4000/api/books/{bookId}`
-
-### Parameters
-
-- **bookId** (path parameter): The unique identifier of the book you want to update. In this case, the book ID is `685557e81aa8a049bb9c0f5b`.
-    
-
-### Request Body
-
-The request body must be a JSON object containing the following parameter:
-
-- **copies** (integer): The new number of copies for the book. This value must be a non-negative integer.
-    
-
-**Example of request body:**
-
-``` json
-{
-  "copies": -5
-}
-
- ```
-
-### Response Format
-
-On a successful request, the API will return a JSON object with the following structure:
-
-- **success** (boolean): Indicates whether the operation was successful.
-    
-- **message** (string): A message providing additional context (may be empty).
-    
-- **error** (object): Contains details about any errors encountered during the request, including:
-    
-    - **name** (string): The name of the error.
-        
-    - **errors** (object): A collection of field-specific errors, where each field can provide:
-        
-        - **name** (string): The name of the field that caused the error.
-            
-        - **message** (string): A message describing the error.
-            
-        - **properties** (object): Additional properties related to the error, including the invalid value and constraints.
-            
-
-**Example of response:**
-
-``` json
-{
-  "success": false,
-  "message": "",
-  "error": {
-    "name": "",
-    "errors": {
-      "copies": {
-        "name": "",
-        "message": "",
-        "properties": {
-          "message": "",
-          "type": "",
-          "min": 0,
-          "path": "",
-          "fullPath": "",
-          "value": 0
-        },
-        "kind": "",
-        "path": "",
-        "value": 0
-      }
-    }
-  }
-}
-
- ```
 
 ### Notes
     
