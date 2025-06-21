@@ -4,6 +4,7 @@ import Borrow from "../models/borrow.model";
 import { throwGenericError } from "../helper/throwGenericError";
 import Book from "../models/book.model";
 import { IBook, IBorrow } from "../types";
+
 export const getBorrowedBooks = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const books = await Borrow.aggregate(
