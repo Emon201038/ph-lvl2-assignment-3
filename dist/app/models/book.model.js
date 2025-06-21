@@ -57,7 +57,6 @@ const BookSchema = new mongoose_1.Schema({
 });
 // pre save hook: update available field based on copies
 BookSchema.pre("save", function (next) {
-    console.log(this, "model doc pre hok");
     if (this.copies === 0) {
         this.available = false;
     }

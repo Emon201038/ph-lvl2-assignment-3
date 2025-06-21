@@ -52,7 +52,7 @@ export const getBooks = async (req: Request, res: Response, next: NextFunction) 
 
     const books = await Book
       .find(filterKeyword)
-      .sort({ [sortBy]: sort ? -1 : 1 })
+      .sort({ [sortBy]: (sort === "desc" || sort === "descending") ? -1 : 1 })
       .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
 
@@ -147,7 +147,6 @@ export const updateBook = async (req: Request, res: Response, next: NextFunction
       }
     };
 
-    console.log(req.body)
     const book = await Book.findByIdAndUpdate(bookId, {
       $set: req.body
     }, {
@@ -164,7 +163,6 @@ export const updateBook = async (req: Request, res: Response, next: NextFunction
 
     successResponse(res, { message: "Book updated successfully.", success: true, payload: book })
   } catch (error) {
-    console.log(error)
     next(error)
   }
 };

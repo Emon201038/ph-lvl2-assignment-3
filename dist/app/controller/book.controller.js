@@ -44,7 +44,7 @@ const getBooks = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         let resMessage = "Books retrieved  successfully.";
         const books = yield book_model_1.default
             .find(filterKeyword)
-            .sort({ [sortBy]: sort ? -1 : 1 })
+            .sort({ [sortBy]: (sort === "desc" || sort === "descending") ? -1 : 1 })
             .skip((Number(page) - 1) * Number(limit))
             .limit(Number(limit));
         if (books.length === 0) {
@@ -134,7 +134,6 @@ const updateBook = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             }
         }
         ;
-        console.log(req.body);
         const book = yield book_model_1.default.findByIdAndUpdate(bookId, {
             $set: req.body
         }, {
@@ -150,7 +149,6 @@ const updateBook = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         (0, response_controller_1.successResponse)(res, { message: "Book updated successfully.", success: true, payload: book });
     }
     catch (error) {
-        console.log(error);
         next(error);
     }
 });

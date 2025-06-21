@@ -30,11 +30,4 @@ app.use((req, res) => {
 });
 //error handler
 app.use(errorHandler_1.errorHandler);
-// (err: Error, req: Request, res: Response) => {
-//   if (err instanceof mongoose.Error.ValidationError) {
-//     res.status(400).json({ message: "Validation Error", success: false, errors: err.errors });
-//   } else {
-//     res.status(500).json({ message: "Internal Server Error", success: false, error: err });
-//   }
-// }
 exports.default = app;
