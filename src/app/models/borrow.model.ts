@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IBorrow } from "../types";
 
-const BorrowSchema = new Schema<IBorrow<Schema.Types.ObjectId>>({
+const BorrowSchema = new Schema<IBorrow>({
   book: {
     type: Schema.Types.ObjectId,
     ref: "Book",
@@ -19,5 +19,5 @@ const BorrowSchema = new Schema<IBorrow<Schema.Types.ObjectId>>({
 }, { timestamps: true, versionKey: false });
 
 
-const Borrow = model<IBorrow<Schema.Types.ObjectId>>("Borrow", BorrowSchema);
+const Borrow = model<IBorrow>("Borrow", BorrowSchema);
 export default Borrow

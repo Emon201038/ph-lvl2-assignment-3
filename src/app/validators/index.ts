@@ -4,9 +4,10 @@ import { errorResponse } from "../controller/response.controller";
 
 
 const runValidation = (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return errorResponse(res, {
+    errorResponse(res, {
       statusCode: 400,
       message: errors.array()[0].msg,
       error: {
@@ -14,8 +15,9 @@ const runValidation = (req: Request, res: Response, next: NextFunction) => {
         errors: errors.array(),
       }
     });
+  } else {
+    next();
   }
-  next();
 
 };
 

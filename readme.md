@@ -301,7 +301,8 @@ This endpoint retrieves the details of a specific book identified by its unique 
 
 ## 4 Update Book
 
-This endpoint allows you to update the number of copies, available, title, description, author, genre and available for a specific book identified by its unique ID.
+This endpoint allows you to update the number of copies, available, title, description, author, genre and available for a specific book identified by its unique ID. 
+**Note:** if book available is false and copies field is updated (not 0) then available will set true and after update of copies filed if its 0 then available field will be false
 
 ### HTTP Method
 
@@ -449,6 +450,7 @@ This endpoint is useful for managing book inventory by allowing updates selected
 ## 5 DELETE BOOk
 
 This endpoint is used to delete a specific book from the database using its unique identifier (`bookId`). The deletion is permanent, and once executed, the book will no longer be accessible through the API.
+**Note:** deleted books related borrwed items will delete. this is done by post hook
 
 #### Request Parameters
 
@@ -469,8 +471,8 @@ On a successful deletion, the API will return a JSON response with the following
 ``` json
 {
   "success": true,
-  "message": "",
-  "data": {}
+  "message": "Book deleted successfull",
+  "data": null
 }
 
  ```
@@ -522,6 +524,7 @@ If book is not available then this error will return
 ## 6 Borrow a Book
 
 This endpoint allows users to borrow a book by specifying the details of the borrowing request. When a user wants to borrow a book, they need to provide the due date for the return, the quantity of books they wish to borrow, and the specific book identifier.
+**Note:** after borrow a book. Book copies will reduce as borrow quantity done by static method.
 
 ### Request
 
@@ -671,7 +674,7 @@ The response will return a JSON object with the following structure:
 ``` json
 {
   "success": true,
-  "message": "",
+  "message": "Borrowed books summary retrieved successfully.",
   "data": [
     {
       "book": {
@@ -686,3 +689,57 @@ The response will return a JSON object with the following structure:
  ```
 
 This endpoint is useful for users to track their borrowed books and manage their borrowing history effectively.
+
+
+## 8 Update Borrow (only quantity)
+
+this end point allow user to update a borrowed book quantity by specific borrowID. It will update book copies as updated value.
+if borrow quantity increased then book copies will decreased and if borrow quantity decreased then book copies will increased.
+
+### Request
+
+**Method:** PUT  
+**Endpoint:** `http://localhost:4000/api/borrow/{borroID}`
+
+**Request Body:**
+``` json
+{
+  "quantity":5
+}
+```
+
+### Example Response
+
+``` json
+{
+  "success": true,
+  "message": "Borrowed book is updated successfully.",
+  "data": {
+    "_id": "68559ee22d999cf2e37db435",
+    "book": "685557e81aa8a049bb9c0f5b",
+    "quantity": 5,
+    "dueDate": "2025-07-26T18:00:00.000Z",
+    "createdAt": "2025-06-20T17:48:18.771Z",
+    "updatedAt": "2025-06-21T04:15:39.015Z"
+  }
+}
+
+ ```
+
+
+## 9 Delete Borrow
+
+this end point will allow to delete a singe borrow with its corresponding id. it will increment the quantity of related books copies.
+
+### Request
+
+**Method:** `DELETE`
+**Endpoint:** `http://localhost:4000/api/borrow/{borrowID}`
+
+### Response 
+``` json 
+{
+  "success": true,
+  "message": "Borrow is deleted successfully.",
+  "data": null
+}

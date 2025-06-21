@@ -5,7 +5,7 @@ export const validateCreateBook = [
     .notEmpty()
     .withMessage("Title is required")
     .isString()
-    .withMessage("Description must be a string"),
+    .withMessage("title must be a string"),
   body("description")
     .optional()
     .isString()
@@ -14,7 +14,7 @@ export const validateCreateBook = [
     .notEmpty()
     .withMessage("Author is required")
     .isString()
-    .withMessage("Description must be a string"),
+    .withMessage("author must be a string"),
   body("genre")
     .notEmpty()
     .withMessage("genre is required")
@@ -29,10 +29,9 @@ export const validateCreateBook = [
     .notEmpty()
     .withMessage("copies is required")
     .isNumeric()
-    .custom(value => { if (value < 0) throw { msg: "Copies must be greater than 0", min: 0 } })
-  // .withMessage("Copies must be a number")
-  // .isInt({ min: 0,max:100 })
-  // .withMessage("Copies must be greater than 0")
+    .withMessage("Copies must be a number")
+    .isInt({ min: 0 })
+    .withMessage("Copies must be greater a positive number")
   ,
   body("available")
     .optional()

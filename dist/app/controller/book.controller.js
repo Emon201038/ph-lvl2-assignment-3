@@ -133,6 +133,8 @@ const updateBook = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                 throw (0, throwGenericError_1.throwGenericError)("InvalidType", message, key, value, 400, "number");
             }
         }
+        ;
+        console.log(req.body);
         const book = yield book_model_1.default.findByIdAndUpdate(bookId, {
             $set: req.body
         }, {
@@ -148,6 +150,7 @@ const updateBook = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         (0, response_controller_1.successResponse)(res, { message: "Book updated successfully.", success: true, payload: book });
     }
     catch (error) {
+        console.log(error);
         next(error);
     }
 });

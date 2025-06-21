@@ -1,9 +1,9 @@
 import { Response } from "express";
 
-interface IPayload<Data = object> {
+interface IPayload<Data = null> {
   success?: boolean;
   message?: string;
-  payload?: Data | object;
+  payload?: Data | null;
   statusCode?: number;
 }
 interface IErrorResponse<TError> {
@@ -22,7 +22,7 @@ export const successResponse = <Data>(res: Response, {
   message = "success",
   statusCode = 200,
   success = true,
-  payload = {} }: IPayload<Data>): IPayload => {
+  payload = null }: IPayload<Data>): IPayload => {
   return res.status(statusCode).json({ success: success, message: message, data: payload })
 }
 

@@ -12,7 +12,7 @@ const bookRouter = express_1.default.Router();
 bookRouter.route("/")
     .get(book_controller_1.getBooks)
     .post(
-// validateCreateBook,
+// validateCreateBook, // this validation is commented out because it is not returning provided validation only mongoose return provided type error. 
 // runValidation,
 book_controller_1.createBook);
 // http://localhost:3000/api/books/:bookId

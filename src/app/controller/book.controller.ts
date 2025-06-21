@@ -145,8 +145,9 @@ export const updateBook = async (req: Request, res: Response, next: NextFunction
         const message = `Invalid type for field '${key}'. Expected ${expectedType}, got ${typeof value}.`;
         throw throwGenericError("InvalidType", message, key, value as string, 400, "number");
       }
-    }
+    };
 
+    console.log(req.body)
     const book = await Book.findByIdAndUpdate(bookId, {
       $set: req.body
     }, {
@@ -163,6 +164,7 @@ export const updateBook = async (req: Request, res: Response, next: NextFunction
 
     successResponse(res, { message: "Book updated successfully.", success: true, payload: book })
   } catch (error) {
+    console.log(error)
     next(error)
   }
 };

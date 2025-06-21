@@ -7,7 +7,7 @@ exports.validateCreateBook = [
         .notEmpty()
         .withMessage("Title is required")
         .isString()
-        .withMessage("Description must be a string"),
+        .withMessage("title must be a string"),
     (0, express_validator_1.body)("description")
         .optional()
         .isString()
@@ -16,7 +16,7 @@ exports.validateCreateBook = [
         .notEmpty()
         .withMessage("Author is required")
         .isString()
-        .withMessage("Description must be a string"),
+        .withMessage("author must be a string"),
     (0, express_validator_1.body)("genre")
         .notEmpty()
         .withMessage("genre is required")
@@ -31,12 +31,9 @@ exports.validateCreateBook = [
         .notEmpty()
         .withMessage("copies is required")
         .isNumeric()
-        .custom(value => { if (value < 0)
-        throw { msg: "Copies must be greater than 0", min: 0 }; })
-    // .withMessage("Copies must be a number")
-    // .isInt({ min: 0,max:100 })
-    // .withMessage("Copies must be greater than 0")
-    ,
+        .withMessage("Copies must be a number")
+        .isInt({ min: 0 })
+        .withMessage("Copies must be greater a positive number"),
     (0, express_validator_1.body)("available")
         .optional()
         .isBoolean()

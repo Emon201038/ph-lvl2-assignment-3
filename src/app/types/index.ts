@@ -1,5 +1,7 @@
+import { Model, Schema } from "mongoose"
+
 export interface IBook {
-  _id: string,
+  _id: Schema.Types.ObjectId,
   title: string,
   author: string,
   description?: string,
@@ -9,9 +11,14 @@ export interface IBook {
   available: boolean
 };
 
-export interface IBorrow<TBook = string> {
-  _id: string,
-  book: TBook,
+export interface IBorrow<BookID = Schema.Types.ObjectId> {
+  _id: Schema.Types.ObjectId,
+  book: BookID,
   quantity: number,
   dueDate: Date
 };
+
+export interface IBookModelType extends Model<IBook> {
+  isBookAvailable: (bookId: Schema.Types.ObjectId, quantity: number) => Promise<boolean>
+  updateCopies: (bookId: Schema.Types.ObjectId, quantity: number) => Promise<IBook | null>
+}

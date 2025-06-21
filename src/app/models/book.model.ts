@@ -1,7 +1,8 @@
 import { Schema, model } from "mongoose";
-import { IBook } from "../types";
+import { IBook, IBookModelType } from "../types";
+import Borrow from "./borrow.model";
 
-const BookSchema = new Schema<IBook>({
+const BookSchema = new Schema<IBook, IBookModelType>({
   title: {
     type: String,
     required: [true, "Title is required"],
@@ -45,6 +46,7 @@ const BookSchema = new Schema<IBook>({
 
 // pre save hook: update available field based on copies
 BookSchema.pre("save", function (next) {
+  console.log(this, "model doc pre hok")
   if (this.copies === 0) {
     this.available = false;
   } else {
@@ -55,14 +57,41 @@ BookSchema.pre("save", function (next) {
 
 // post save hook: update available field based on copies
 BookSchema.post("findOneAndUpdate", function (doc, next) {
+
+  if (!doc) next()
   if (doc.copies === 0) {
     doc.available = false;
   } else {
-    doc.available = true;
-  }
+    if (doc.available)
+      doc.available = true;
+    else
+      doc.available = false
+  };
+  doc.save();
   next();
 });
 
+// post detele hook: delete books borrowed
+BookSchema.post("findOneAndDelete", async function (doc, next) {
+  if (!doc) next()
+  await Borrow.deleteMany({ book: doc._id });
+  next()
+})
 
-const Book = model<IBook>("Book", BookSchema);
+// methods: static
+BookSchema.static("updateCopies", async function (bookId: Schema.Types.ObjectId, copies: number): Promise<IBook | null> {
+  const book = await this.findOneAndUpdate({ _id: bookId }, { $inc: { copies: -copies } }, { new: true });
+  return book
+});
+
+BookSchema.static("isBookAvailable", async function (bookId: Schema.Types.ObjectId, quantity: number): Promise<boolean> {
+  const book = await this.findOne({ _id: bookId });
+  if (book && book.copies - quantity >= 0 && book.available) {
+    return true
+  }
+  return false
+});
+
+
+const Book = model<IBook, IBookModelType>("Book", BookSchema);
 export default Book

@@ -70,7 +70,25 @@ const borrowBook = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                 message: "Book is not found.",
             };
         }
+        ;
+        // check if book is available
+        const isAvailable = yield book_model_1.default.isBookAvailable(req.body.book, req.body.quantity);
+        if (!isAvailable) {
+            throw {
+                statusCode: 400,
+                message: "Book is not available.",
+            };
+        }
         const borrow = yield borrow_model_1.default.create(req.body);
+        if (!borrow) {
+            throw {
+                statusCode: 400,
+                message: "Failed to borrow this book.",
+            };
+        }
+        ;
+        // updating book copies after borrow
+        yield book_model_1.default.updateCopies(borrow.book, borrow.quantity);
         (0, response_controller_1.successResponse)(res, { message: "Book borrowed successfully.", success: true, statusCode: 201, payload: borrow });
     }
     catch (error) {
@@ -87,7 +105,7 @@ const getSingleBorrowBook = (req, res, next) => __awaiter(void 0, void 0, void 0
             throw (0, throwGenericError_1.throwGenericError)("InvalidMongooseID", "Invalid book id. Please provide a valid book id.", "borrowId", borrowId, 400, "ObjectID");
         }
         ;
-        const borrow = yield borrow_model_1.default.findById(borrowId);
+        const borrow = yield borrow_model_1.default.findById(borrowId).populate("book").lean();
         if (!borrow) {
             throw {
                 statusCode: 404,
@@ -104,7 +122,39 @@ const getSingleBorrowBook = (req, res, next) => __awaiter(void 0, void 0, void 0
 exports.getSingleBorrowBook = getSingleBorrowBook;
 const updateBorrowBook = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        (0, response_controller_1.successResponse)(res, { message: "Borrowed book is updated successfully.", success: true });
+        const borrowId = req.params.borrowId;
+        const mongooseIdRegx = /^[0-9a-fA-F]{24}$/;
+        if (!mongooseIdRegx.test(borrowId)) {
+            // throw generic error as assignment requirement
+            throw (0, throwGenericError_1.throwGenericError)("InvalidMongooseID", "Invalid book id. Please provide a valid book id.", "borrowId", borrowId, 400, "ObjectID");
+        }
+        ;
+        const borrow = yield borrow_model_1.default.findById(borrowId);
+        if (!borrow) {
+            throw {
+                statusCode: 404,
+                message: "Borrow is not found.",
+            };
+        }
+        ;
+        const checkQuantity = yield book_model_1.default.isBookAvailable(borrow.book, (Number(req.body.quantity) - borrow.quantity));
+        if (!checkQuantity) {
+            throw {
+                statusCode: 400,
+                message: "Book quantity is not enough.",
+            };
+        }
+        ;
+        const updatedBorrow = yield borrow_model_1.default.findByIdAndUpdate(borrowId, { quantity: req.body.quantity }, { new: true });
+        if (!updatedBorrow) {
+            throw {
+                statusCode: 400,
+                message: "Failed to update this book.",
+            };
+        }
+        ;
+        yield book_model_1.default.updateCopies(updatedBorrow.book, updatedBorrow.quantity - borrow.quantity);
+        (0, response_controller_1.successResponse)(res, { message: "Borrowed book is updated successfully.", success: true, payload: updatedBorrow });
     }
     catch (error) {
         next(error);
@@ -113,6 +163,22 @@ const updateBorrowBook = (req, res, next) => __awaiter(void 0, void 0, void 0, f
 exports.updateBorrowBook = updateBorrowBook;
 const deleteBorrowBook = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const borrowId = req.params.borrowId;
+        const mongooseIdRegx = /^[0-9a-fA-F]{24}$/;
+        if (!mongooseIdRegx.test(borrowId)) {
+            // throw generic error as assignment requirement
+            throw (0, throwGenericError_1.throwGenericError)("InvalidMongooseID", "Invalid book id. Please provide a valid book id.", "borrowId", borrowId, 400, "ObjectID");
+        }
+        ;
+        const borrow = yield borrow_model_1.default.findByIdAndDelete(borrowId);
+        if (!borrow) {
+            throw {
+                statusCode: 404,
+                message: "Borrow is not found.",
+            };
+        }
+        ;
+        yield book_model_1.default.updateCopies(borrow.book, -borrow.quantity);
         (0, response_controller_1.successResponse)(res, { message: "Borrowed book is deleted successfully.", success: true });
     }
     catch (error) {
